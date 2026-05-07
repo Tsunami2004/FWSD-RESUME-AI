@@ -12,8 +12,10 @@ const Login = () => {
 
   const handleSubmit= async (e) => {
     e.preventDefault();
-     await handleLogin({email,password})
+    const data = await handleLogin({email, password})
+    if (data) {
       navigate("/")
+    }
   }
 
   if(loading){
@@ -30,14 +32,14 @@ const Login = () => {
           <div className="input-group">
             <label htmlFor="email">Email:</label>
             <input
-            onchange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
              type="email" id="email" name="email" placeholder='Enter Email address' />
           </div>
 
           <div className="input-group">
             <label htmlFor="password">Password:</label>
             <input 
-            onchange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
              type="password" id="password" name="password" placeholder='Enter Password' />
           </div>
 

@@ -11,16 +11,19 @@ const interviewReportModel = require("../models/interviewReport.model")
 async function generateInterViewReportController(req, res) {
 
     const resumeContent = await (new pdfParse.PDFParse({ data: req.file.buffer })).getText()
-    const { selfDescription, jobDescription } = req.body
+    const { selfDescription, jobDescription, preparationDays } = req.body
+    const days = Math.max(1, Math.min(90, parseInt(preparationDays) || 7))
 
     console.log("Resume text length:", resumeContent.text?.length)
     console.log("selfDescription:", selfDescription?.substring(0, 50))
     console.log("jobDescription:", jobDescription?.substring(0, 50))
+    console.log("preparationDays:", days)
 
     const interViewReportByAi = await generateInterviewReport({
         resume: resumeContent.text,
         selfDescription,
-        jobDescription
+        jobDescription,
+        preparationDays: days
     })
 
     console.log("AI response keys:", Object.keys(interViewReportByAi))

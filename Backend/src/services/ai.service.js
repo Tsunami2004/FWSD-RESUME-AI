@@ -76,12 +76,14 @@ const interviewReportSchema = {
     required: ["matchScore", "technicalQuestions", "behavioralQuestions", "skillGaps", "preparationPlan", "title"]
 }
 
-async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
+async function generateInterviewReport({ resume, selfDescription, jobDescription, preparationDays = 7 }) {
 
     const prompt = `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
                         Job Description: ${jobDescription}
+
+                        The preparation plan MUST be exactly ${preparationDays} days long (from day 1 to day ${preparationDays}). Do not generate more or fewer days.
 `
 
     const response = await ai.models.generateContent({

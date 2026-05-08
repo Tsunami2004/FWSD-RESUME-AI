@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
-import { useParams } from 'react-router'
 
 
 
@@ -59,7 +58,7 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, loading } = useInterview()
+    const { report, loading, getResumePdf } = useInterview()
 
 
 
@@ -103,6 +102,14 @@ if (!report) {
                             </button>
                         ))}
                     </div>
+                    <button
+                        className='button primary-button'
+                        onClick={() => getResumePdf(report._id)}
+                        disabled={loading}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        {loading ? 'Generating...' : 'Download Resume'}
+                    </button>
                 </nav>
 
                 <div className='interview-divider' />

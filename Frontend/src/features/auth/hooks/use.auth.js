@@ -11,10 +11,14 @@ export const useAuth = () => {
         setLoading(true)
         try{
             const data = await login({email,password})
+            if (!data?.user) {
+                throw new Error(data?.message || "Login failed")
+            }
             setUser(data.user)
             return data
         }catch(err){
             console.error("Login failed:", err)
+            return null
         }finally{
             setLoading(false)
         }
@@ -47,9 +51,10 @@ export const useAuth = () => {
 
         const getAndSetUser = async () => {
             try {
-
                 const data = await getMe()
-                setUser(data.user)
+                if (data?.user) {
+                    setUser(data.user)
+                }
             } catch (err) { } finally {
                 setLoading(false)
             }

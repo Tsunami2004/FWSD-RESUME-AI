@@ -31,7 +31,8 @@ export async function login({email,password}){
     })
     return response.data
     }catch(err){
-        console.log(err);
+        console.error(err.response?.data || err.message)
+        throw err
     }  
 }
 
@@ -46,11 +47,6 @@ export async function logout(){
 }
 
 export async function getMe(){
-
-    try{
     const response = await api.get('/api/auth/get-me')
     return response.data
-    }catch(err){
-        console.log(err);
-    }
 }

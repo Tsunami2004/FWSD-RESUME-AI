@@ -3,13 +3,20 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")  
 const app = express()
 
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+}
+
+// CORS must be first — before any other middleware — so preflight OPTIONS requests are handled correctly
+app.use(cors(corsOptions))
+app.options("/{*path}", cors(corsOptions)) // explicitly handle preflight for all routes
+
 app.use(express.static("public"));
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}))
 
 /*require all the routes here*/
 const authRouter = require("./routes/auth.routes")

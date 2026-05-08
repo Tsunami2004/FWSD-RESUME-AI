@@ -38,11 +38,15 @@ async function registerUserController(req, res){
         process.env.JWT_SECRET,
         {expiresIn: "1d"}
     )
-    res.cookie("token", token, {
+
+    const cookieOptions = {
         httpOnly: true,
-        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 24 * 60 * 60 * 1000 // 1 day
-    })
+    }
+
+    res.cookie("token", token, cookieOptions)
 
     res.status(201).json({
         message: "User registered successfully",
@@ -56,6 +60,12 @@ async function registerUserController(req, res){
 
 async function loginUserController(req, res){
     const {email, password} = req.body
+
+    if(!email || !password){
+        return res.status(400).json({
+            message: "Email and password are required"
+        })
+    }
 
     const user = await userModel.findOne({email})
     if(!user){
@@ -71,16 +81,21 @@ async function loginUserController(req, res){
             message: "Invalid email or password"
         })
     }
+
     const token = jwt.sign(
         {id: user._id, username: user.username, email: user.email},
         process.env.JWT_SECRET,
         {expiresIn: "1d"}
     )
-    res.cookie("token", token, {
+
+    const cookieOptions = {
         httpOnly: true,
-        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 24 * 60 * 60 * 1000 // 1 day
-    })
+    }
+
+    res.cookie("token", token, cookieOptions)
     res.status(200).json({
         message: "User logged in successfully",
         user:{ 
@@ -102,7 +117,10 @@ async function logoutUserController(req, res){
     if(token){
         await blacklistTokenModel.create({token})
     }
-    res.clearCookie("token")
+    res.clearCookie("token", {
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production"
+    })
     res.status(200).json({
         message: "User logged out successfully"
     })

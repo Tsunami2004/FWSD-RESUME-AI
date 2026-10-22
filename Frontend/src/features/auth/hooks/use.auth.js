@@ -1,63 +1,54 @@
-import {useContext,useEffect} from "react"
+import { useContext } from "react"
 import { AuthContext } from "../auth.context.jsx"
-import { login, register, logout, getMe } from "../services/auth.api.js"
+import { login, register, logout } from "../services/auth.api.js"
 
 export const useAuth = () => {
-    const context=useContext(AuthContext)
-    const{user,setUser,loading,setLoading} = context
+    const context = useContext(AuthContext)
+    const { user, setUser, loading, setLoading } = context
 
-
-    const handleLogin = async ({email,password}) => {
+    // throws on failure so the calling component can show the real error message
+    const handleLogin = async ({ email, password }) => {
         setLoading(true)
-        try{
-            const data = await login({email,password})
+        try {
+            const data = await login({ email, password })
+            if (!data?.user) throw new Error(data?.message || "Login failed")
             setUser(data.user)
             return data
-        }catch(err){
-            console.error("Login failed:", err)
-        }finally{
+        } catch (err) {
+            const message = err?.response?.data?.message || err?.message || "Login failed"
+            throw new Error(message)
+        } finally {
             setLoading(false)
         }
     }
-    const handleRegister = async ({username,email,password}) => {
+
+    // throws on failure so the calling component can show the real error message
+    const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
-        try{
-        const data = await register({username,email,password})
-        setUser(data.user)
-        return data
-        }catch(err){
-            console.error("Registration failed:", err)
-        }finally{
-        setLoading(false)
+        try {
+            const data = await register({ username, email, password })
+            if (!data?.user) throw new Error(data?.message || "Registration failed")
+            setUser(data.user)
+            return data
+        } catch (err) {
+            const message = err?.response?.data?.message || err?.message || "Registration failed"
+            throw new Error(message)
+        } finally {
+            setLoading(false)
         }
     }
+
     const handleLogout = async () => {
         setLoading(true)
-        try{
-            const data=await logout()
+        try {
+            await logout()
             setUser(null)
-        }catch(err){
+        } catch (err) {
             console.error("Logout failed:", err)
-        }finally{
+        } finally {
             setLoading(false)
         }
     }
 
-     useEffect(() => {
-
-        const getAndSetUser = async () => {
-            try {
-
-                const data = await getMe()
-                setUser(data.user)
-            } catch (err) { } finally {
-                setLoading(false)
-            }
-        }
-
-        getAndSetUser()
-
-    }, [])
     return { user, loading, handleLogin, handleRegister, handleLogout }
-
 }

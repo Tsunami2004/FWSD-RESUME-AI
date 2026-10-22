@@ -18,9 +18,6 @@ const Register = () => {
     }
   }
 
-  if(loading){
-    return (<main><h2>Register</h2><p>Loading...</p></main>)
-  }
   return (
   <main>
       <div className="form-container">
@@ -48,7 +45,9 @@ const Register = () => {
             type="password" id="password" name="password" placeholder='Enter Password' />
           </div>
 
-          <button className='button primary-button'>Register</button>
+          <button className='button primary-button' disabled={loading}>
+            {loading ? 'Registering...' : 'Register'}
+          </button>
         </form>
 
         <p>Already have an account? <Link to="/login">Login</Link></p>

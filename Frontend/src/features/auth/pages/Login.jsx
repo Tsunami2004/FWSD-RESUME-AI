@@ -18,10 +18,6 @@ const Login = () => {
     }
   }
 
-  if(loading){
-    return (<main><h2>Login</h2><p>Loading...</p></main>)
-  }
-
   return (
     <main>
       <div className="form-container">
@@ -43,7 +39,9 @@ const Login = () => {
              type="password" id="password" name="password" placeholder='Enter Password' />
           </div>
 
-          <button className='button primary-button'>Login</button>
+          <button className='button primary-button' disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
         <p>Don't have an account? <Link to="/register">Register</Link></p>
       </div>

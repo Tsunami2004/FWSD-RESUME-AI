@@ -3,7 +3,8 @@
   "services": {
     "backend": {
       "root": "Backend",
-      "framework": "express"
+      "framework": "express",
+      "entrypoint": "server.js"
     },
     "frontend": {
       "root": "Frontend",

@@ -1,9 +1,9 @@
 import axios from "axios";
 
+// In production on Vercel: VITE_API_URL is not set → baseURL is "" (same-origin, Vercel rewrites /api/*)
+// For local dev: create Frontend/.env.local with VITE_API_URL=http://localhost:3000
 const api = axios.create({
-    // In production, Vercel rewrites /api/* to the backend service on the same domain.
-    // VITE_API_URL can be left unset on Vercel; set it to http://localhost:3000 for local dev.
-    baseURL: import.meta.env.VITE_API_URL || '',
+    baseURL: import.meta.env.VITE_API_URL ?? "",
     withCredentials: true,
 })
 
@@ -16,13 +16,16 @@ export const generateInterviewReport = async ({ jobDescription, selfDescription,
     const formData = new FormData()
     formData.append("jobDescription", jobDescription)
     formData.append("selfDescription", selfDescription ?? "")
-    // only append resume if a real file was selected
     if (resumeFile instanceof File) {
         formData.append("resume", resumeFile)
     }
     formData.append("preparationDays", preparationDays ?? 7)
 
-    const response = await api.post("/api/interview/", formData)
+    const response = await api.post("/api/interview/", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    })
 
     return response.data
 

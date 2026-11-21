@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// In production on Vercel: VITE_API_URL is not set → baseURL is "" (empty = same-origin)
+// Vercel rewrites /api/* to the backend service on the same domain.
+// For local dev: create Frontend/.env.local with VITE_API_URL=http://localhost:3000
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+    baseURL: import.meta.env.VITE_API_URL ?? "",
     withCredentials: true,
 })
 
